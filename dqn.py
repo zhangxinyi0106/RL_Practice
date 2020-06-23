@@ -70,7 +70,10 @@ class DQN:
         return tf.layers.dense(dense2, units=self.n_actions)
 
 
-class DQNAgent(object):
+class OriginalDQNAgent:
+    """This is the original DQN proposed in 2013
+    Implemented based on https://arxiv.org/abs/1312.5602
+    """
     def __init__(self, lr, gamma, mem_size, n_actions, batch_size,
                  input_dims=(210, 160, 4), epsilon_start=0.1,
                  epsilon_dec=True, epsilon_end=0.01, fc1_units=32, fc2_units=64):
@@ -125,3 +128,10 @@ class DQNAgent(object):
 
         if self.epsilon_dec and self.epsilon * 0.99 >= self.epsilon_min:
             self.epsilon *= 0.99
+
+
+class NatureDQNAgent:
+    """This is the DQN published on Nature in 2015
+    Implemented based on https://web.stanford.edu/class/psych209/Readings/MnihEtAlHassibis15NatureControlDeepRL.pdf
+    """
+    pass

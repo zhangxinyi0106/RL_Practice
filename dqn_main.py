@@ -1,12 +1,12 @@
 import gym
 import numpy as np
-from dqn import DQNAgent
+from dqn import OriginalDQNAgent
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     env = gym.make('CartPole-v0')
-    agent = DQNAgent(lr=0.001, gamma=0.99, mem_size=1000, n_actions=2,
-                     batch_size=64, input_dims=[4], epsilon_start=0.05)
+    agent = OriginalDQNAgent(lr=0.001, gamma=0.99, mem_size=1000, n_actions=2,
+                             batch_size=64, input_dims=[4], epsilon_start=0.05)
 
     train_score_history = []
     avg_train_score_history = []
