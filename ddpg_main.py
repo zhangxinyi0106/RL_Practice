@@ -1,20 +1,18 @@
 import gym
 import numpy as np
-from dqn import OriginalDQNAgent, NatureDQNAgent
+from ddpg import DDPGAgent
 import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
-    env = gym.make('CartPole-v0')
-    env._max_episode_steps = 500
-    agent = NatureDQNAgent(lr=0.001, gamma=0.99, mem_size=50000, n_actions=2,
-                           batch_size=64, input_dims=[4], epsilon_start=1,
-                           update_freq=5000)
+    env = gym.make('Pendulum-v0')
+    agent = DDPGAgent(actor_lr=0.001, critic_lr=0.001, input_dims=[3], tau=0.01,
+                      gamma=0.99, mem_size=50000, n_actions=1, batch_size=64)
 
     train_score_history = []
     avg_train_score_history = []
     test_score_history = []
 
-    for i in range(10000):
+    for i in range(1000):
         obs = env.reset()
         done = False
         train_score = 0
