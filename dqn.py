@@ -7,6 +7,8 @@ class ExperienceMemory:
         self.mem_size = mem_size
         self.mem_counter = 0
         self.n_actions = n_actions
+        self.input_dims = input_dims
+        self.n_actions = n_actions
         self.action_discrete = action_discrete
         self.state_memory = np.zeros((self.mem_size, *input_dims))
         self.action_memory = np.zeros((self.mem_size, n_actions),
