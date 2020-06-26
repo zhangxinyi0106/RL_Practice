@@ -86,7 +86,8 @@ class ActorNetwork(DQN):
     def calculate_gradients(self):
         actor_gradients = []
         # calculate ∇aQ(s, a|θQ)|s=si,a=μ(si)∇θμ μ(s|θμ)|si
-        un_normalized_actor_gradients = tf.gradients(self.mu, self.params, self.action_gradient)
+        # put a minus sign here in order to turn minimize to maximize later
+        un_normalized_actor_gradients = tf.gradients(self.mu, self.params, -self.action_gradient)
         for g in un_normalized_actor_gradients:
             # calculate 1/N(∇aQ(s, a|θQ)|s=si,a=μ(si)∇θμ μ(s|θμ)|si)
             actor_gradients.append(tf.div(g, self.batch_size))
@@ -95,7 +96,7 @@ class ActorNetwork(DQN):
 
 class DDPGAgent:
     def __init__(self, actor_lr, critic_lr, input_dims, tau, gamma=0.99, n_actions=2,
-                 mem_size=10000, fc1_units=400, fc2_units=300,
+                 mem_size=10000, fc1_units=64, fc2_units=32,
                  batch_size=64):
         self.gamma = gamma
         self.tau = tau

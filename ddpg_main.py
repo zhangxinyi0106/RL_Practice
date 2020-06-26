@@ -11,8 +11,9 @@ if __name__ == '__main__':
     train_score_history = []
     avg_train_score_history = []
     test_score_history = []
+    avg_test_score_history = []
 
-    for i in range(1000):
+    for i in range(5000):
         obs = env.reset()
         done = False
         train_score = 0
@@ -44,9 +45,10 @@ if __name__ == '__main__':
                     obs = new_state
                 test_sore_list.append(test_score)
             test_score_history.append(sum(test_sore_list) / len(test_sore_list))
+            avg_test_score_history.append(np.mean(train_score_history[-10:]))
         # testing end
 
-    plt.plot(test_score_history)
+    plt.plot(avg_test_score_history)
     plt.show()
     #
     # plt.plot(train_score_history)

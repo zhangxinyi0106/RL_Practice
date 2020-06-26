@@ -8,13 +8,14 @@ if __name__ == '__main__':
     env._max_episode_steps = 500
     agent = NatureDQNAgent(lr=0.001, gamma=0.99, mem_size=50000, n_actions=2,
                            batch_size=64, input_dims=[4], epsilon_start=1,
-                           update_freq=5000)
+                           update_freq=1000)
 
     train_score_history = []
     avg_train_score_history = []
     test_score_history = []
+    avg_test_score_history = []
 
-    for i in range(10000):
+    for i in range(5000):
         obs = env.reset()
         done = False
         train_score = 0
@@ -46,9 +47,10 @@ if __name__ == '__main__':
                     obs = new_state
                 test_sore_list.append(test_score)
             test_score_history.append(sum(test_sore_list) / len(test_sore_list))
+            avg_test_score_history.append(np.mean(train_score_history[-10:]))
         # testing end
 
-    plt.plot(test_score_history)
+    plt.plot(avg_test_score_history)
     plt.show()
     #
     # plt.plot(train_score_history)

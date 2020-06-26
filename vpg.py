@@ -58,12 +58,12 @@ class PolicyNetwork:
         return tf.layers.dense(dense2, units=self.n_actions)
 
     def calculate_gradients(self, ):
+        actor_gradients = []
         # TODO: can I do tf.math.log here directly?
         un_normalized_actor_gradients = tf.gradients(tf.math.log(self.mu), self.params, self.advantage_estimates)
-        # TODO: so fat take only one trajectory so no need to be divided by |Dk|
-        # for g in un_normalized_actor_gradients:
-        #     actor_gradients.append(tf.div(g, self.batch_size))
-        return un_normalized_actor_gradients
+        for g in un_normalized_actor_gradients:
+            actor_gradients.append(tf.div(g, self.batch_size))
+        return actor_gradients
 
 
 class ValueNetwork(DQN):
@@ -76,7 +76,7 @@ class ValueNetwork(DQN):
 
 class VPGAgent:
     def __init__(self, policy_lr, value_lr, input_dims, n_actions=2,
-                 mem_size=10000, fc1_units=400, fc2_units=300,
+                 mem_size=10000, fc1_units=64, fc2_units=32,
                  batch_size=64):
         self.experience_memory = TrajectoryStore(mem_size, input_dims, n_actions, action_discrete=False)
         self.batch_size = batch_size
@@ -99,9 +99,9 @@ class VPGAgent:
         return mu[0]
 
     def learn(self):
-        states, actions, rewards, new_states, _ = self.experience_memory.get_trajectory()
+        states, actions, rewards, new_states, terminals = self.experience_memory.get_trajectory()
 
-        rewards_to_go = self._calculate_rewards_to_go(rewards)
+        rewards_to_go = self._calculate_rewards_to_go(rewards, terminals)
         advantage_estimates = self._calculate_advantage_estimates(states, rewards_to_go)
 
         self.sess.run(self.policy.optimizer,
@@ -117,10 +117,14 @@ class VPGAgent:
                       })
 
     @staticmethod
-    def _calculate_rewards_to_go(rewards):
+    def _calculate_rewards_to_go(rewards, is_end):
         rewards_to_go = []
+        terminates = np.where(is_end == 0)[0]
         for i, v in enumerate(rewards):
-            rewards_to_go.append(np.sum(rewards[i:]))
+            if i > terminates[0]:
+                terminates = terminates[1:]
+            end = terminates[0]
+            rewards_to_go.append(np.sum(rewards[i:end]))
 
         return np.reshape(rewards_to_go, (len(rewards_to_go), 1))
 
